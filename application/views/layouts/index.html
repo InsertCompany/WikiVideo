@@ -1,0 +1,183 @@
+    <!DOCTYPE html>
+    <html>
+        <head>
+            {% block head %}
+                <title>{% block title %}{% endblock %} - WikiVideo</title>
+                <link href="{{ base_url }}public/css/bootstrap.min.css" rel="stylesheet">
+                <link href="{{ base_url }}public/css/style.css"rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&display=swap" rel="stylesheet">
+                <script src="https://kit.fontawesome.com/ef1d1d0a2f.js"></script>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+            {% endblock %}
+        </head>
+        <body>
+            <header>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container">
+                        <a class="navbar-brand" href="{{base_url}}">WikiVideo</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSite" aria-controls="navbarSite" aria-expanded="false" aria-label="Alterna navegação">
+                            <span class="navbar-toggler-icon"></span>
+                        </button><!-- button.nav-bar-toggler -->
+                        <div class="collapse navbar-collapse" id="navbarSite">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarCourses" role="button" data-toggle="dropdown" aria-haspopup="true">Cursos</a>
+                                    <div id="dropdownCourses" class="dropdown-menu" aria-labelledby="navbarCourses">
+                                        <div class="row text-center">
+                                            <div class="col-lg-4 col-xs-12">
+                                                <label>Tecnologia</label>
+                                                <hr>
+                                                <a class="dropdown-item">Programação</a>
+                                                <a class="dropdown-item">Banco de Dados</a>
+                                                <a class="dropdown-item">Nome do curso</a>
+                                                <a class="dropdown-item">Nome do curso</a>
+                                            </div>
+                                            <div class="col-lg-4 col-xs-12">
+                                                <label>Agronomia</label>
+                                                <hr>
+                                                <a class="dropdown-item">Plantar mandioca</a>
+                                                <a class="dropdown-item">Nome do curso</a>
+                                                <a class="dropdown-item">Nome do curso</a>
+                                                <a class="dropdown-item">Nome do curso</a>
+                                            </div>
+                                            <div class="col-lg-4 col-xs-12">
+                                                    <label>Investimento</label>
+                                                    <hr>
+                                                    <a class="dropdown-item">IQ Option</a>
+                                                    <a class="dropdown-item">Nome do curso</a>
+                                                    <a class="dropdown-item">Nome do curso</a>
+                                                    <a class="dropdown-item">Nome do curso</a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 text-center mt-3">
+                                            <a class="btn btn-lg btn-block btn-custom" href="{{base_url}}courses">Mais cursos</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li><!-- li.nav-item-->
+                            </ul><!-- ul.navbar-nav -->
+                            <ul class="navbar-nav ml-auto">
+                                {% if firstname %} 
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarAccount" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{firstname}}
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarAccount">
+                                            <a class="dropdown-item" href="{{base_url}}dashboard">Minha Area</a>
+                                            <a class="dropdown-item" href="#">Meu perfil</a>
+                                            <a class="dropdown-item" href="{{base_url}}auth/logout">Logout</a>
+                                        </div>
+                                    </li>
+                                {% else %}
+                                    <button class="btn-modal-auth" data-toggle="modal" data-target="#modalAuth">Entrar/Registrar-se</button>
+                                {% endif %}
+                            </ul><!-- ul.navbar-nav -->
+                        </div><!-- div.navbar-collapse -->
+                    </div><!-- div.container -->
+                </nav> <!-- nav.navbar -->
+            </header>
+            <div id="content">{% block content %}{% endblock %}</div>
+                <div class="modal fade" id="modalAuth" tabindex="-1" role="dialog" aria-labelledby="authTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="row header-auth text-center">
+                                    <div class="col-6">
+                                        <button id="buttonLogin" class="btn btn-link btn-auth" >
+                                        Login
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button id="buttonRegister" class="btn btn-link btn-auth" >
+                                        Registrar-se
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if firstname == null %}
+                            <div class="modal-body">
+                                <div id="loginBoard">
+                                    <h4>Login</h4>
+                                    <form method="post" id="loginForm">
+                                        <div class="alert alert-primary" id="alertRegisterSuccess" role="alert">
+                                            Conta cadastrada com sucesso, Informe novamente os dados para o login!
+                                        </div>
+                                        <div class="alert alert-danger" id="alertLoginError" role="alert">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Endereço de Email:</label>
+                                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" placeholder="Digite o seu email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Senha:</label>
+                                            <input type="password" class="form-control" id="password" name="password" aria-describedby="passwordHelp" placeholder="Digite sua senha">
+                                        </div>
+                                        <input type="hidden" name="method" value="login">
+                                        <div class="mb-3"><a href="{{base_url}}auth/recovery" >Esqueceu a senha?</a></div>
+                                        <button type="submit" id="loginSubmit" class="btn btn-block btn-primary">Enviar</button>
+                                    </form>
+                                </div>
+                                <div id="registerBoard">
+                                    <h4>Registrar-se</h4>
+                                    <form method="post" id="registerForm">
+                                        <div class="alert alert-danger" id="registerError" role="alert">
+                                            Um simples alerta danger. Olha só!
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="firstname">Nome completo:</label>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-xs-12 mb-mobile-5">
+                                                    <input type="text" class="form-control" name="firstname" placeholder="Primeiro nome" required min="2" max="20">
+                                                </div>
+                                                <div class="col-lg-6 col-xs-12">
+                                                    <input type="text" class="form-control" name="lastname" placeholder="Sobrenome" required min="7" max="40">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" name="email" placeholder="Informe o seu email" required max="60">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirmEmail">Confirmar Email:</label>
+                                            <input type="email" class="form-control" name="confirmEmail" placeholder="Informe novamente o seu email" required max="60">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-lg-6 mb-mobile-5">
+                                                    <label for="password">Senha:</label>
+                                                    <input type="password" class="form-control" name="password" placeholder="Informe uma senha" required min="6" max="60">
+                                                </div>
+                                                <div class="col-xs-12 col-lg-6">
+                                                    <label for="confirmPassword">Confirmar Senha:</label>
+                                                    <input type="password" class="form-control" name="confirmPassword" placeholder="Informe novamente sua senha" required min="6" max="60">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="birthday">Data de Nascimento:</label>
+                                            <input type="date" class="form-control" name="birthday" required min="1900-01-01" max="2019-01-01">
+                                        </div>
+                                        <input type="hidden" name="method" value="register">
+                                        <input id="registerSubmit" type="submit" class="btn btn-primary btn-block" value="Registrar">
+                                    </form>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <h5>Todos direitos reservados!</h5>
+                <p></p>
+            </footer>
+            <script src="{{ base_url }}public/js/jquery.min.js"></script>
+            <script src="{{ base_url }}public/js/bootstrap.min.js"></script>
+            <script src="{{ base_url }}public/js/popper.min.js"></script>
+            <script src="{{ base_url }}public/js/script.js"></script>
+            <script src="{{ base_url }}public/js/ajax.js"></script>
+        </body>
+    </html>
