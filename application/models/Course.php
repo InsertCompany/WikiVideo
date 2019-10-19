@@ -10,7 +10,6 @@ class Course extends CI_Model {
     public $status;
     public $created_at;
 
-
     public function exists_course($id){
         $query = $this->db->get_where('Course',array('id'=>$id));
 		if(!empty($query->result_array())){
