@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Dashboard extends CI_Controller {
+class DashboardController extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -24,31 +24,42 @@ class Dashboard extends CI_Controller {
 		parent::__construct();
 		$this->load->library('session');
 		$this->load->model('User','',TRUE);
-		$this->load->library('Twig');
-		$this->load->helper('url');
+
+		$this->data['base_url'] = base_url();		
 		
-		$this->data = array(
-			'base_url'=>base_url()
-		);
-		$login = $this->User->verifyLogin();
+		$login = $this->User->verify_login();
 		if($login){
-			$this->data += $login;
+			$login->firstname = ucfirst(explode(" ",$login->name)[0]);
+			
+			if($login->gender == 0){
+				$login->gender = "Masculino";
+			}else{
+				$login->gender = "Feminino";
+			}
+			$login->birthdate = date('d/m/Y',strtotime($login->birthdate));
+			
+			$this->data['user'] = $login;			
+			if($login->administrator || $login->professor || $login->bolsonaro){
+				$this->data['has_permission'] = true;
+			}			
+		}else{
+			redirect(base_url());
 		}
 	}
 	
 	public function index(){
-		echo $this->twig->render('dashboard/index',$this->data);
+		$this->twig->display('dashboard/index.twig',$this->data);
 	}
 
 	public function my_courses(){
-		echo $this->twig->render('dashboard/my_courses',$this->data);
+		$this->twig->display('dashboard/my_courses.twig',$this->data);
 	}
 	public function my_course(){
-		echo $this->twig->render('dashboard/my_course',$this->data);
+		$this->twig->display('dashboard/my_course.twig',$this->data);
 		
 	}
 	public function my_profile(){
-		echo $this->twig->render('dashboard/myProfile',$this->data);
+		$this->twig->display('dashboard/my_profile.twig',$this->data);
 
 	}
 

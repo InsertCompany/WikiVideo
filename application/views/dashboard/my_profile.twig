@@ -1,0 +1,77 @@
+{% extends "layouts/index.html" %}
+
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container my-5">
+        <h4 class="text-center mb-4">Seja bem vindo {{ user.name }}</h4>
+        <div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="aside-menu btn-group-vertical btn-block">
+                        <a href="{{base_url}}dashboard" class="btn btn-block btn-primary">Inicio</a>
+                        <a href="{{base_url}}dashboard/my-courses" class="btn btn-block btn-primary">Meus cursos</a>
+                        <a href="{{base_url}}dashboard/my-profile" class="btn btn-block btn-primary">Meu Perfil</a>
+
+                    </div>
+                </div>
+                <div class="col-md-10 ml-0 dashboard-user  my-3">
+                    <div class="row profile-card">
+                        <div class="col-md-4 col-12 mt-4">
+                            <div class="text-sm-center"><img src="{{base_url}}public/img/user.png" class="profile-img"></div>
+                        </div>
+                        <div class="col-md-8 col-12">
+                            <div class="row">
+                                <div class="col-12 mt-4">
+                                    <label>Nome Completo:</label>
+                                    <p> {{ user.name }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label>Email:</label>
+                                    <p>{{ user.email }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label>Descrição:</label>
+                                    <p>{{ user.description }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label>CEP:</label>
+                                    <p>{{ user.postalcode }}</p>
+                                </div>
+                                <div class="col-6 mt-3">
+                                    <label>Cidade:</label>
+                                    <p>{{ user.city }} - {{user.state}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 ">
+                                    <label>Data de Nascimento:</label>
+                                    <p>{{user.birthdate}}</p>
+                                </div>
+                                <div class="col-6">
+                                    <label>Gênero:</label>
+                                    <p>{{ user.gender }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-12 text-center">
+                            <a href="" class="btn btn-primary">Editar perfil</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

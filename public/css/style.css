@@ -5,10 +5,16 @@
     font-family: 'Open Sans', sans-serif;
 }
 /* Para usar porcetagem dentro do heigth*/
-body,html{
+html{
     height:100%;
+    min-height: 100%;
 }
-/*Cria uma borda abaixo do menu principal */
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+/*Elementos do header */
 header nav{
     border-bottom: 1px solid #0d47a1;
 }
@@ -27,7 +33,10 @@ header nav{
     color:#0d47a1;
     outline: none;
 }
-
+#dropdownCourses .dropdown-item{
+    cursor: pointer;
+}
+/*Elementos da seção sobre */
 .img-about{
     height:100%;
     width:100%;
@@ -37,6 +46,7 @@ header nav{
 .platform-info{
     min-height: 300px;
 }
+/*Elementos da sessão de melhores cursos */
 .best-courses{
     border-top: 2px solid #000;
     border-bottom: 2px solid #000;
@@ -53,13 +63,16 @@ header nav{
     color:#fff;
     margin-bottom: 40px;
 }
+/*Elementos do footer */
 footer{
     width:100%;
     background-color:#1a237e;
     color:#fff;
+    margin-top:auto;
     padding:40px;
     text-align: center;
 }
+/* Elementos da pagina de cursos */
 .courses{
     padding:40px;
 }
@@ -71,15 +84,12 @@ footer{
     font-size:24px;
     cursor: pointer;
 }
-.modal-auth-header{
-    justify-content: center !important;
-    color:red;
-}
-.modal-header{
+/*Elementos da tela de login */
+.container-login-header{
     padding:0;
     border-color: #0d47a1;
 }
-.modal-header .btn-auth{
+.container-login-header .btn-auth{
     padding:10px;
     width:100%;
     text-decoration: none;
@@ -91,9 +101,8 @@ footer{
     color:#fff;
 }
 .header-auth{
-    width:100%;
-    margin:0;
-    padding:0;
+    border-left:1px solid #000;
+    border-bottom:1px solid #000;
 }
 .header-auth .col-6{
     padding:0;
@@ -101,26 +110,43 @@ footer{
 #registerBoard{
     display: none;
 }
-.modal-body h4{
-    text-align: center;
-}
 #registerError{
     display: none;
 }
 .confirm-email-box{
     padding:40px;
 }
-.princing-item {
+#alertLoginError{
+    display:none;
+}
+.container-login{
+    border: 1px solid #000;
+    
+}
+.login-body{
+    padding:40px;
+}
+.login-body h4{
+    text-align:center;
+}
+#alertRegisterSuccess{
+    display:none;
+}
+
+
+/*Elementos de animação e designer */
+
+.box-animate {
     transition: all 150ms ease-out;
 }
-.princing-item:hover {
+.box-animate:hover {
     transform: scale(1.05);
 }
-.princing-item:hover .deco-layer--1 {
+.box-animate:hover .deco-layer--1 {
     -webkit-transform: translate3d(13px, 0, 0);
     transform: translate3d(13px, 0, 0);
 }
-.princing-item:hover .deco-layer--2 {
+.box-animate:hover .deco-layer--2 {
     -webkit-transform: translate3d(-13px, 0, 0);
     transform: translate3d(-13px, 0, 0);
 }
@@ -133,15 +159,8 @@ footer{
 .btn-custom:hover{
     color:#fff;
 }
-#dropdownCourses .dropdown-item{
-    cursor: pointer;
-}
-#alertRegisterSuccess{
-    display:none;
-}
-#alertLoginError{
-    display:none;
-}
+
+/*Elementos da pagina de um curso */
 .course-author-img,.comment-autor-img{
     width: 32px;
     height:32px;
@@ -169,15 +188,26 @@ footer{
     background-position: center;
     min-height: 400px;
 }
-.platform-info{
-    z-index:999;
-}
+
 .dashboard-user{
     border:1px solid #000;
+    padding:0 20px;
 }
 .details-number{
     font-size: 26px;
 }
+
+.profile-card{
+    padding:10px;
+    margin:10px 0;
+}
+.profile-img{
+    width:250x;
+    height: 250px;
+    text-align: center;
+    border-radius: 50%;
+}
+
 @media screen and (max-width:992px){
    .courser-filter-desktop{
        display: none;

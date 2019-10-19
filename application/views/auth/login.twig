@@ -1,0 +1,114 @@
+{% extends "layouts/index.html" %}
+
+{% block title %}Entrar/Registrar-se{% endblock %}
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+{% block content %}
+    <div class="container container-login my-5">
+        <div class="container-login-header">
+            <div class="row header-auth ">
+                <div class="col-6">
+                    <button id="buttonLogin" class="btn btn-link btn-auth" >
+                    Login
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button id="buttonRegister" class="btn btn-link btn-auth" >
+                    Registrar-se
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="login-body">
+            <div id="loginBoard">
+                <h4>Login</h4>
+                <form method="post" id="loginForm">
+                    <div class="alert alert-primary" id="alertRegisterSuccess" role="alert">
+                        Conta cadastrada com sucesso, Informe novamente os dados para o login!
+                    </div>
+                    <div class="alert alert-danger" id="alertLoginError" role="alert">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Endereço de Email:</label>
+                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" placeholder="Digite o seu email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" class="form-control" id="password" name="password" aria-describedby="passwordHelp" placeholder="Digite sua senha">
+                    </div>
+                    <input type="hidden" name="method" value="login">
+                    <div class="mb-3"><a href="{{base_url}}auth/recovery" >Esqueceu a senha?</a></div>
+                    <button type="submit" id="loginSubmit" class="btn btn-block btn-primary">Enviar</button>
+                </form>
+            </div>
+            <div id="registerBoard">
+                <h4>Registrar-se</h4>
+                <form method="post" id="registerForm">
+                    <div class="alert alert-danger" id="registerError" role="alert">
+                        Um simples alerta danger. Olha só!
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname">Nome completo:</label>
+                        <div class="row">
+                            <div class="col-lg-6 col-xs-12 mb-mobile-5">
+                                <input type="text" class="form-control" name="firstname" placeholder="Primeiro nome" required min="2" max="20">
+                            </div>
+                            <div class="col-lg-6 col-xs-12">
+                                <input type="text" class="form-control" name="lastname" placeholder="Sobrenome" required min="7" max="40">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" name="email" placeholder="Informe o seu email" required max="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmEmail">Confirmar Email:</label>
+                        <input type="email" class="form-control" name="confirmEmail" placeholder="Informe novamente o seu email" required max="60">
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-6">
+                                <label for="confirmEmail">CEP:</label>
+                                <input type="text" class="form-control" name="postalcode" placeholder="Informe o CEP" required>
+                            </div>
+                            <div class="col-xs-12 col-lg-6">
+                                <label for="gender">Gênero:</label>
+                                <select class="custom-select" name="gender" required>
+                                    <option selected>Gênero</option>
+                                    <option value="0">Masculino</option>
+                                    <option value="1">Feminino</option>
+                                </select>
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-6 mb-mobile-5">
+                                <label for="password">Senha:</label>
+                                <input type="password" class="form-control" name="password" placeholder="Informe uma senha" required min="6" max="60">
+                            </div>
+                            <div class="col-xs-12 col-lg-6">
+                                <label for="confirmPassword">Confirmar Senha:</label>
+                                <input type="password" class="form-control" name="confirmPassword" placeholder="Informe novamente sua senha" required min="6" max="60">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthdate">Data de Nascimento:</label>
+                        <input type="date" class="form-control" name="birthdate" required min="1900-01-01" max="2019-01-01">
+                    </div>
+                    <input type="hidden" name="method" value="register">
+                    <input id="registerSubmit" type="submit" class="btn btn-primary btn-block" value="Registrar">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{{ base_url }}public/js/ajaxAuth.js"></script>
+    <script type="text/javascript" src="{{base_url}}public/js/jquery.mask.min.js"/></script>
+    <script>
+        $("input[name='postalcode']").mask('99999-999');
+    </script>
+{% endblock %}

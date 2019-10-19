@@ -37,19 +37,27 @@
     </nav>
 </div>
 <hr>
-<div class="course my-5 container">
-    <div class="row">
+<div class="course container">
+    {% if autherror %}
+    <div class="alert alert-danger" role="alert">
+        {{autherror}}  <a href="{{base_url}}auth/login">Realizar login</a>.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    <div class="row my-5">
         <div class="col-9">
             <div class="course-details">
                 <img class="course-details-img">
                 <h3 class="mt-5">Descrição:</h3>
-                <p>Sed justo dui, ornare ut consectetur a, fringilla nec justo. Nunc tellus turpis, dictum at sollicitudin in, blandit sit amet eros. Cras posuere odio urna, ut hendrerit elit commodo non. Sed rhoncus lectus nec finibus bibendum. Integer convallis metus et quam eleifend efficitur. Maecenas et ultrices libero, eget mollis nulla. Suspendisse mi eros, finibus nec convallis nec, scelerisque ut nulla. Nunc consectetur facilisis neque eget bibendum. Curabitur rutrum enim sapien, ut pellentesque nibh iaculis et. Donec faucibus imperdiet sapien, pretium dignissim ligula scelerisque non. Donec a sem ut arcu ullamcorper rhoncus et pulvinar nibh.</p>
+                <p>{{course.description}}</p>
                 <div class="course-outline mt-5">
                     <h3 class=>Linha de tempo do curso</h3>
                     <div class="accordion">
                         <div class="card">
                             <div class="card-header" id="heading1">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">Capitulo 1</button>
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">Conteúdo 1</button>
                             </div>
                             <div class="collapse show" id="collapse1" aria-labelledby="heading1">
                                 <div class="card-body">
@@ -66,7 +74,7 @@
                         </div>
                         <div class="card">
                             <div class="card-header" id="heading1">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapse2">Capitulo 1</button>
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapse2">Conteúdo 1</button>
                             </div>
                             <div class="collapse" id="collapseOne" aria-labelledby="heading1">
                                 <div class="card-body">
@@ -136,11 +144,15 @@
         </div>
         <div class="col-3 text-center">
             <div class="d-flex justify-content-center"><img class="course-details-author-img" src="{{base_url}}public/img/user.png"></div>
-            <h3>Nome do autor</h3>
-            <h5>Data da postagem</h5>
+            <h3>{{course.name}}</h3>
+            <h5>{{course.created_at}}</h5>
             <h5>Quantidade de matriculas</h5>
+            {% if enroll == true %}
+            <a href="{{base_url}}dashboard/my-courses/course?id={{course.id}}" class="btn btn-primary btn-block">Acessar curso </a>
+            {% else %}
+            <a href="{{ base_url }}course/enroll?id={{course.id}}" class="btn btn-primary btn-block">Matricular-se</a>
+            {% endif %}
             
-            <a href="" class="btn btn-primary btn-block">Matricular-se</a>
         </div>
     <img>
    

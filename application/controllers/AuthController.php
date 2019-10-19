@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Auth extends CI_Controller {
+class AuthController extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -24,31 +24,36 @@ class Auth extends CI_Controller {
         parent::__construct();
 		$this->load->library('session');	
 		$this->load->model('User','',TRUE);
-		$this->load->library('Twig');
-		$this->load->helper('url');
-		
-		$this->data = array(
-			'base_url'=>base_url()
-		);
-		$login = $this->User->verifyLogin();
-		if($login){
-			$this->data += $login;
-		}
+
+		$this->data['base_url'] = base_url();		
+
+		$this->login = $this->User->verify_login();
+
 	}
+	/* Rota para confirmação do email */
 	public function confirm()
 	{
-        $this->data['base_url'] = base_url();
         if(isset($_GET['email'])){
 			$this->data['email'] = $_GET['email'];
             $this->data['showMessage'] = "true";
         }
-		echo $this->twig->render('auth/confirm',$this->data);
-    }
+		$this->twig->display('auth/confirm.twig',$this->data);
+	}
+	/* rota para realização de logout */
 	public function logout(){
 		$this->session->sess_destroy();
-		redirect('', 'refresh');
+		redirect(base_url(), 'refresh');
 	}
+	/* Rota para recuperação de senha */
 	public function recovery(){
-		echo $this->twig->render('auth/recovery',$this->data);
+		$this->twig->display('auth/recovery.twig',$this->data);
+	}
+	/* Rota de exibição da tela de login e registro */
+	public function login(){
+		if($this->login){
+			redirect($this->data['base_url']);
+		}else{
+			$this->twig->display('auth/login.twig',$this->data);
+		}
 	}
 }

@@ -49,19 +49,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'home';
-$route['courses'] = 'home/courses';
-$route['course'] = 'home/course';
+$route['default_controller'] = 'HomeController';
+$route['courses'] = 'HomeController/courses';
+$route['course'] = 'HomeController/course';
 
-$route['auth/confirm'] = 'auth/confirm';
-$route['auth/recovery'] = 'auth/recovery';
-$route['auth/logout'] = 'auth/logout';
+$route['auth/confirm'] = 'AuthController/confirm';
+$route['auth/login'] = 'AuthController/login';
+$route['auth/recovery'] = 'AuthController/recovery';
+$route['auth/logout'] = 'AuthController/logout';
 
-$route['dashboard/my-courses'] = 'dashboard/my_courses';
-$route['dashboard/my-courses/course'] = 'dashboard/my_course';
-$route['dashboard/my-profile'] = 'dashboard/my_profile';
+$route['dashboard'] = 'DashboardController/index';
+$route['dashboard/my-courses'] = 'DashboardController/my_courses';
+$route['dashboard/my-courses/course'] = 'DashboardController/my_course';
+$route['dashboard/my-profile'] = 'DashboardController/my_profile';
 
+$route['course/enroll'] = 'CourseController/enroll';
 
-$route['ajax'] = 'ajax/ajax';
+$route['ajax'] = 'AjaxController/ajax';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
