@@ -1,23 +1,18 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class AjaxController extends CI_Controller {
+class AjaxLoginController extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
+    /**
+	 * Controlador que controla as requisições ajax de registro e login do usuario.
 	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/user_guide/general/urls.html
+	 * Mapeado para seguinteURL
+	 * 		https://wikivideo.ga/auth/login
 	 */
+
+    /* Construtor padrão do controlador, inicializando uma biblioteca de validação de formularios, de sessão
+    * E também carregando a model User e Permission.
+    */
 
 	public function __construct()
 	{
@@ -25,6 +20,7 @@ class AjaxController extends CI_Controller {
         
         $this->load->library('form_validation');
         $this->load->library('session');
+        $this->load->helper('cookie');
         $this->load->model("User",'',TRUE);
         $this->load->model("Permission",'',TRUE);
 
@@ -40,6 +36,9 @@ class AjaxController extends CI_Controller {
                 case "login":
                     echo json_encode($this->login());
                     break;
+                default:
+					echo json_encode(array('error'=>'forbiden'));
+					break;
             }
         }else{
             echo json_encode(["error"=>"forbiden"]);
@@ -59,15 +58,16 @@ class AjaxController extends CI_Controller {
                     if($loginHash){
                         $data = array('email'=>$email,'hash'=>$loginHash);
                         $this->session->set_userdata($data);
+                        set_cookie('email',$email,'999999');
                         $result['result'] = 'success';
                     }                    
                 }else{
                     $return['result'] = "error";
-                    $return['errors'] = "Dados Invalidos";
+                    $return['errors'] = "Email e/ou senha Invalidos!";
                 }
             }else{
                 $return['result'] = "error";
-                $return['errors'] = "Dados Invalidos";
+                $return['errors'] = "Email e/ou senha Invalidos!";
             }
         }else{
             $return['result'] = "error";
@@ -91,16 +91,10 @@ class AjaxController extends CI_Controller {
                 $confirmPassword= $this->input->post('confirmPassword');
                 $birthdate= $this->input->post('birthdate');
                 $gender= $this->input->post('gender');
-                $postalcode = str_replace('-','',$this->input->post('postalcode'));
     
                 /*Junta o nome e realizar o hash da senha */
                 $name = $firstname . " " . $lastname;
                 $hashPassword = password_hash($password,PASSWORD_DEFAULT);
-              
-                /* Consulta nome da cidade e estado pelo cep */
-                $location = $this->consult_postal_code($postalcode);
-                $city = $location->localidade;
-                $state = $location->uf;
 
                 /* Valida se a idade é maior e inferior ao limite */
                 if(!$this->verify_age()){
@@ -110,7 +104,7 @@ class AjaxController extends CI_Controller {
                 }
                 /* Com todos dados certos inicia a transação para banco de dados */
                 $this->db->trans_begin();
-                if($this->User->insert_entry($name,$email,$hashPassword,$birthdate,$gender,$postalcode,$city,$state)){
+                if($this->User->insert_entry($name,$email,$hashPassword,$birthdate,$gender)){
                     $last_id = $this->db->insert_id();
                     /* Cadastra as permissões padrões de usuario */
                     if($this->Permission->insert_entry($last_id,0,0,0)){
@@ -168,7 +162,7 @@ class AjaxController extends CI_Controller {
             array(
                 'field'=>'password',
                 'label'=>'Senha',
-                'rules'=>'required|min_length[6]|max_length[60]'
+                'rules'=>'required|max_length[60]'
             )
         );
         $this->form_validation->set_rules($config);
@@ -184,12 +178,12 @@ class AjaxController extends CI_Controller {
             array(
                 'field'=>'firstname',
                 'label'=>'Primeiro nome',
-                'rules'=>'required|min_length[2]|max_length[25]|regex_match[/^([-a-zA-Z_ ])+$/]'
+                'rules'=>'required|min_length[2]|max_length[30]|regex_match[/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/]'
             ),
             array(
                 'field'=>'lastname',
                 'label'=>'Sobrenome',
-                'rules'=>'required|min_length[4]|max_length[40]|regex_match[/^([-a-zA-Z_ ])+$/]'
+                'rules'=>'required|min_length[3]|max_length[40]|regex_match[/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/]'
             ),
             array(
                 'field'=>'email',
@@ -217,12 +211,6 @@ class AjaxController extends CI_Controller {
                 'label'=>'Data de nascimento',
                 'rules'=>'required|max_length[10]|min_length[10]',
                 'message'=>'Informe uma data de nascimento valida!'
-            ),
-            array(
-                'field'=>'postalcode',
-                'label'=>'CEP',
-                'rules'=>'required|max_length[9]|min_length[9]',
-                'message'=>'Informe o seu CEP.'
             ),
             array(
                 'field'=>'gender',

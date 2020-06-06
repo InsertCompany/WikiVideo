@@ -1,38 +1,40 @@
 {% extends "layouts/index.html" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}{{course.title}}{% endblock %}
 {% block head %}
     {{ parent() }}
 {% endblock %}
 {% block content %}
 <div class="container">
-    <h1 class="my-3 text-center">Titulo do curso</h1>
+    <h1 class="my-3 text-center">{{course.title}}</h1>
     <div class="row d-flex justify-content-center">
-        <div class="">
-            <div class="container-stars">
-                <span>
-                    <i class="fas fa-star"></i>
-                </span>
-                <span>
-                    <i class="far fa-star"></i>
-                </span>
-                <span>
-                    <i class="far fa-star"></i>
-                </span>
-                <span>
-                    <i class="far fa-star"></i>
-                </span>
-                <span>
-                    <i class="far fa-star"></i>
-                </span>
-            </div>
+        <div class="container-stars mb-3">
+            {% if course.rating_average > 0 %}
+            {%
+                for i in 1..course.rating_average
+            %}
+            <span>
+                <i class="fas fa-star" style="color:#FC0;"></i>
+            </span>
+            {% endfor%}
+            {% endif %}
+            {% if course.rating_average != 5 %}
+            {% for i in 1..5-course.rating_average%}
+            <span>
+                <i class="far fa-star" style="color:#ccc"></i>
+            </span>
+            {% endfor %}
+            {% endif %}
+            <span class="container-quantity-stars text-center">
+                ({{course.ratings}})
+            </span>
         </div>
     </div>
     <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{base_url}}">Inicio</a></li>
         <li class="breadcrumb-item active" aria-current="page"><a href="{{base_url}}courses">Cursos</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a href="{{base_url}}course?id=">Curso</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="{{base_url}}course?id={{course.id}}">{{course.title}}</a></li>
     </ol>
     </nav>
 </div>
@@ -46,116 +48,188 @@
         </button>
     </div>
     {% endif %}
-    <div class="row my-5">
-        <div class="col-9">
+    {% if enrollerror %}
+    <div class="alert alert-danger" role="alert">
+        {{enrollerror}}  
+    </div>
+    {% endif %}
+    <div class="row my-5 flex-md-row-reverse">
+        <div class="col-md-3 col-12 text-center mb-3">
+            {%if (course.profile_picture != "")%}
+            <div class="d-flex justify-content-center"><img class="course-details-author-img" src="{{base_url}}public/img/profile/{{course.profile_picture}}"></div>
+            {% else %}
+            <div class="d-flex justify-content-center"><img class="course-details-author-img" src="{{base_url}}public/img/user.png"></div>
+            {%endif%}
+            <h3>{{course.name}}</h3>
+            <h5>{{course.created_at|date("d/m/Y")}}</h5>
+            <h5>Quantidade de matriculas:{{course.enrollment_quantity}}</h5>
+            {% if existenroll == true %}
+            <a href="{{base_url}}dashboard/my-courses/course?id={{enroll.id}}" class="btn btn-primary btn-block">Acessar curso</a>
+            {% else %}
+            <a href="{{ base_url }}course/enroll?id={{course.id}}" class="btn btn-primary btn-block">Matricular-se</a>
+            {% endif %}
+        </div>
+        <div class="col-md-9 col-12">
             <div class="course-details">
-                <img class="course-details-img">
+                <img class="course-details-img" src="{{base_url}}../painel/public/images/{{course.image}}">
                 <h3 class="mt-5">Descrição:</h3>
                 <p>{{course.description}}</p>
                 <div class="course-outline mt-5">
                     <h3 class=>Linha de tempo do curso</h3>
+                    {% if course.content|length > 0 %}
                     <div class="accordion">
+                        {% for content in course.content %}
                         <div class="card">
-                            <div class="card-header" id="heading1">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">Conteúdo 1</button>
+                            <div class="card-header" id="heading{{content.id}}">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{content.id}}" aria-expanded="false" aria-controls="collapse{{content.id}}">{{content.title}}</button>
                             </div>
-                            <div class="collapse show" id="collapse1" aria-labelledby="heading1">
+                            <div class="collapse" id="collapse{{content.id}}" aria-labelledby="heading{{content.id}}">
                                 <div class="card-body">
                                     <ul>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
+                                        {% for video in content.video %}
+                                        <li class="my-3">{{ video.title }}</li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-header" id="heading1">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapse2">Conteúdo 1</button>
-                            </div>
-                            <div class="collapse" id="collapseOne" aria-labelledby="heading1">
-                                <div class="card-body">
-                                    <ul>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                        <li class="my-3">Aula N - Nome da Aula</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
+                    {% else %}
+                    <div class="mt-3">
+                        <p>Este curso não tem nenhum conteudo no momento!</p>
+                    </div>
+                    {%endif%}
                 </div>
                 <hr>
-                <div class="container-coments">
+                {%verbatim%}
+                <div id="app-ratings" class="container-coments">
                     <h3 class="text-center">Avaliações</h3>
-                    <div class="coments mt-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="card-text">
-                                    <p>nulla eros mattis augue, et semper urna augue ac justo. Curabitur sed erat ac leo viverra suscipit. Maecenas eget ipsum eros. Nulla scelerisque orci a gravida tempor. In pharetra sem tortor, ac dictum nisl lobortis id.</p>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="container-stars">
-                                        <span>
-                                            <i class="fas fa-star"></i>
-                                        </span>
-                                        <span>
-                                            <i class="far fa-star"></i>
-                                        </span>
-                                        <span>
-                                            <i class="far fa-star"></i>
-                                        </span>
-                                        <span>
-                                            <i class="far fa-star"></i>
-                                        </span>
-                                        <span>
-                                            <i class="far fa-star"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <img class="comment-autor-img" src="{{base_url}}public/img/user.png">
-                                        </div>
-                                        <div class="col-10">
-                                            <p>Nome do autor</p>
+                    <div class="coments mt-3">
+                        <div v-if="ratings.length > 0">
+                            <div class="card my-2" v-for="rating in ratings">
+                                <div class="card-body">
+                                    <div class="card-text row">
+                                        <p class="col-10">"{{rating.comment}}"</p>
+                                        <div class="mb-3 col-2">
+                                            <span v-if="rating.rating > 0">
+                                                <i v-for="n in rating.rating-0" class="fas fa-star" style="color:#FC0"></i>
+                                            </span><span v-if="rating.rating !=5">
+                                                <i v-for="n in 5-rating.rating" class="far fa-star" style="color:#CCC"></i>
+                                            </span>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div class="d-flex justify-content-between mt-3">
                                         <div class="row">
-                                            <p class="col-12">00/00/0000</p>
+                                            <div class="col-3">
+                                                <img class="comment-autor-img" v-if="rating.profile_picture != ''" :src="base_url+'public/img/profile/'+rating.profile_picture">
+                                                <img class="comment-autor-img" v-if="rating.profile_picture == ''" :src="base_url+'public/img/user.png'">
+                                            </div>
+                                            <div class="col-9">
+                                                <span>{{rating.name}}</span>
+                                                <p>{{rating.created_at | formatDate}}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                       
+                        <div v-if="ratings.length <= 0" class="text-center">
+                            <p>Nenhuma avaliação no momento</p>
+                        </div>
+                        <nav class="mt-3">
+                            <ul class="pagination d-flex justify-content-center">
+                                <li id="previous-page" class="page-item">
+                                    <button class="page-link" v-on:click="previousPage()">Anterior</button>
+                                </li>
+                                <li id="next-page" class="page-item">
+                                    <button class="page-link" v-on:click="nextPage()">Proximo</button>
+                                </li>
+                            </ul><!-- ul.pagination -->
+                        </nav><!-- nav -->
+                        <input type="hidden" id="page" value="1">
                     </div>
                 </div>
-
+                {%endverbatim%}
             </div>
-        </div>
-        <div class="col-3 text-center">
-            <div class="d-flex justify-content-center"><img class="course-details-author-img" src="{{base_url}}public/img/user.png"></div>
-            <h3>{{course.name}}</h3>
-            <h5>{{course.created_at}}</h5>
-            <h5>Quantidade de matriculas</h5>
-            {% if enroll == true %}
-            <a href="{{base_url}}dashboard/my-courses/course?id={{course.id}}" class="btn btn-primary btn-block">Acessar curso </a>
-            {% else %}
-            <a href="{{ base_url }}course/enroll?id={{course.id}}" class="btn btn-primary btn-block">Matricular-se</a>
-            {% endif %}
-            
         </div>
     <img>
    
 </div>
+<script>
+     Vue.config.productionTip = false;
+        Vue.filter('formatDate', function(value) {
+            if (value) {
+                return moment(String(value)).format('DD/MM/YYYY')
+            }
+        });
+    var app = new Vue({
+        el:"#app-ratings",
+        data(){
+            return{
+                ratings:[],
+                base_url:"https://wikivideo.ga/wikivideo/",
+                url:'ajaxCourses',
+            }
+        },
+        mounted(){
+            this.getRatings();
+        },
+        methods:{
+            getRatings(){
+                let $this = this;
+                var params = new window.URLSearchParams(window.location.search);
+                courseId = params.get('id');
 
+                page = parseInt($("#page").val());
+                
+                var userData = new FormData();
+                userData.set('method','getRatings');
+                userData.set('courseId',courseId);
+                userData.set('page',page);
+
+                axios({
+                    method:'post',
+                    url:this.base_url+this.url,
+                    data:userData
+                }).then((response)=>{
+                    this.ratings = response.data.ratings;
+                    console.log(response);
+
+                    if(page >= response.data.max_page){
+                        $("#next-page").addClass("disabled");
+                    }else if(page < response.data.max_page){
+                        $("#next-page").removeClass("disabled");
+                    }
+                    if(response.data.max_page < 2){
+                        $("#next-page").addClass("disabled");
+                    }  
+                });
+
+                if(page > 1){
+                    $("#previous-page").removeClass("disabled");
+                } 
+                if(page <= 1){
+                    $("#previous-page").addClass("disabled");
+                }
+                
+            },
+            nextPage(){
+                $("#page").val(parseInt($("#page").val())+1);
+                page = $("#page").val();
+                this.getRatings();
+            },
+            previousPage(){
+                $("#page").val(parseInt($("#page").val())-1);
+                page = $("#page").val();
+                this.getRatings();
+            }
+        }
+    });
+
+    function formatData(data){
+        return moment(data).format('DD-MM-YYYY')
+    }
+
+</script>
 {% endblock %}

@@ -4,6 +4,16 @@
     top:0;
     font-family: 'Open Sans', sans-serif;
 }
+.link{
+    cursor: pointer;
+}
+.video-link{
+    padding:10px;
+    cursor:pointer;
+}
+.video-link:hover{
+    background-color:#eee;
+}
 /* Para usar porcetagem dentro do heigth*/
 html{
     height:100%;
@@ -75,14 +85,6 @@ footer{
 /* Elementos da pagina de cursos */
 .courses{
     padding:40px;
-}
-.courser-filter-desktop{
-    border-right: 2px solid #000;
-}
-.btn-toggle-courser-filter{
-    display:none;
-    font-size:24px;
-    cursor: pointer;
 }
 /*Elementos da tela de login */
 .container-login-header{
@@ -162,8 +164,8 @@ footer{
 
 /*Elementos da pagina de um curso */
 .course-author-img,.comment-autor-img{
-    width: 32px;
-    height:32px;
+    width: 50px;
+    height:50px;
     border-radius:50%;
 }
 .container-stars li{
@@ -178,15 +180,13 @@ footer{
     list-style: none;
 }
 .course-details-author-img{
-    width:100px;
-    height:100px;
+    width:150px;
+    height:150px;
     border-radius:50%;
 }
 .about-img{
     background-repeat: no-repeat;
-    background-size: 100%;
-    background-position: center;
-    min-height: 400px;
+    height: 100%;
 }
 
 .dashboard-user{
@@ -202,19 +202,27 @@ footer{
     margin:10px 0;
 }
 .profile-img{
-    width:250x;
-    height: 250px;
+
+    height:200px;
     text-align: center;
     border-radius: 50%;
 }
+/* Sistema de estrelas */
+.stars input[type=radio] {
+    display: none;
+}
+.stars label i.fa:before {
+    content:'\f005';
+    cursor:pointer;
+    color: #FC0;
+}
+.stars input[type=radio]:checked ~ label i.fa:before {
+    color: #CCC;
+    cursor:pointer;
+}
 
 @media screen and (max-width:992px){
-   .courser-filter-desktop{
-       display: none;
-   }
-   .btn-toggle-courser-filter{
-       display: inline-block;
-   }
+   
    #dropdownCourses{
         min-width: 0;
         left:0;

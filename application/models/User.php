@@ -7,17 +7,13 @@ class User extends CI_Model {
     public $password_hash;
     public $birthdate;
     public $gender;
-    public $postalcode;
 
-    public function insert_entry($name,$email,$passwordHash,$birthdate,$gender,$postalcode,$city,$state){
+    public function insert_entry($name,$email,$passwordHash,$birthdate,$gender){
         $this->name = $name;
         $this->email = $email;
         $this->password_hash = $passwordHash;
         $this->birthdate = $birthdate;
         $this->gender = $gender;
-        $this->postalcode = $postalcode;
-        $this->city = $city;
-        $this->state = $state;
 
         if($this->db->insert('User', $this)){
             return true;
@@ -31,13 +27,24 @@ class User extends CI_Model {
         $user = array('login_hash' => $hashLogin);
         
         if($this->db->update('User',$user,array('email'=>$email))){
+            $this->set_user_acess($email);
             return $hashLogin;
         }else{
             return null;
         }
     }
+    public function set_user_acess($email){
+        $id = $this->get_user_by_email($email)->userId;
+        $ip = $_SERVER['REMOTE_ADDR'];
+        if($this->db->insert('UserAcess',array('user_id'=>$id,'ip_access'=>$ip))){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
     public function get_user_by_email($email){
-        $user = $this->db->select('*')->from('User')->join('Permission','User.id=Permission.user_id')->where(array('email'=>$email))->get()->result();
+        $user = $this->db->select('*,User.id as userId')->from('User')->join('Permission','User.id=Permission.user_id')->where(array('email'=>$email))->get()->result();
         if($user != null){
             return $user[0];
         }else{
@@ -66,6 +73,18 @@ class User extends CI_Model {
             return false;
         }
     }
+    public function get_password($user_id){
+        $user = $this->db->get_where('User',array('id'=>$user_id))->result()[0];
+        return $user;
+    }
+    public function update_password($user_id,$hash){
+        $query = $this->db->update("User",array("password_hash"=>$hash),array("id"=>$user_id));
+        if($query){
+            return true;
+        }else{
+            return false;
+        }
+    }
     public function verify_email($email){
         $query = $this->db->get_where('User',array('email'=>$email));
         if(!empty($query->result())){
@@ -86,6 +105,22 @@ class User extends CI_Model {
                 return null;
             }
 		}
-	}
+    }
+    public function update_profile_picture($id_user,$picture_path){
+        $query = $this->db->update("User",array("profile_picture"=>$picture_path),array("User.id"=>$id_user));
+        if($query){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function remove_profile_picture($id_user){
+        $query = $this->db->update("User",array("profile_picture"=>""),array("User.id"=>$id_user));
+        if($query){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 }

@@ -4,20 +4,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class HomeController extends CI_Controller {
 
 	/**
-	 * Index Page for this controller.
+	 * Controlador que renderiza as principais telas da plataforma
 	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/user_guide/general/urls.html
+	 * Mapeado para seguinte URL
+	 * 		https://wikivideo.ga/my-dashboard/*
 	 */
+
+    /* Construtor padrão do controlador, inicializando uma biblioteca de validação de formularios, de sessão
+    * E também carregando a model User,Enrollment e Course.
+	*/
+
 	private $data = array();
 
 	public function __construct()
@@ -46,11 +42,20 @@ class HomeController extends CI_Controller {
 				$this->data['has_permission'] = true;
 			}			
 		}
+		$categories = $this->Course->get_category(3);
+		$categories[0]->courses = $this->Course->list_course(4,0,$categories[0]->id);
+		$categories[1]->courses = $this->Course->list_course(4,0,$categories[1]->id);
+		$categories[2]->courses = $this->Course->list_course(4,0,$categories[2]->id);
+		$this->data['categories'] = $categories;
+
+	}
+	public function chat(){
+		$this->twig->display("home/chat.twig",$this->data);
 	}
 	
 	public function index()
 	{
-		$courses = $this->Course->get_all_course(8);
+		$courses = $this->Course->list_course(8,0);
 		$this->data['bestcourses']=$courses;
 	
 		$this->twig->display('home/home.twig', $this->data);
@@ -71,22 +76,34 @@ class HomeController extends CI_Controller {
 		if($error){
 			$this->data['autherror'] = $error;
 		}
-	
+
+		/*obtém e formata os dados do curso */
+		$course = $this->Course->get_course($course_id);
+		$this->data['course'] = $course;
+		$this->data['course']->content = $this->Course->get_content($course_id);
+		foreach($this->data['course']->content as $content){
+			$content->video = $this->Course->get_video($content->id);
+		}
 		/* Verifica se o usuario esta logado */
 		if($this->login){
+			$success = $this->session->flashdata('enrollsuccess');
+			$error = $this->session->flashdata('enrollerror');
+
+			$this->data['enrollsuccess'] = $success;
+			$this->data['enrollerror'] = $error;
 			/* verifica se existe alguma matricula*/
-			if($this->Enrollment->exists_enroll($this->login->user_id,$course_id)){
-				/*obtém e formata os dados do curso */
-				$course = $this->Course->get_course($course_id);
-				$course->created_at = date('d/m/Y',time($course->created_at));
-				$this->data['course'] = $course;
-				$this->data['enroll'] = true;
+			$enroll = $this->Enrollment->exists_enroll($this->login->user_id,$course_id);
+			if($enroll != null){
+				$this->data['enroll'] = $enroll[0];
+				$this->data['existenroll'] = true;
 			}else{
-				$this->data['enroll'] = false;
+				$this->data['existenroll'] = false;
 			}
 
 		}
 		$this->twig->display('home/course.twig',$this->data);
 	}
-
+	public function error_404(){
+		header("Location:".$this->data['base_url']);
+	}
 }

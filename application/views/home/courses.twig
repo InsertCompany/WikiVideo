@@ -1,109 +1,203 @@
 {% extends "layouts/index.html" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Cursos{% endblock %}
 {% block head %}
     {{ parent() }}
 {% endblock %}
 {% block content %}
     <div class="courses">
         <div class="container">
-            <h3 class="mb-5 text-center ">Cursos cadastrados na plataforma.</h3>
-            <div class="row">
-                <a class="btn-toggle-courser-filter"><i class="fas fa-bars"></i>
-                </a>
-                <aside class="col-lg-3 col-md-1 courser-filter-desktop">
-                    <h5>Filtrar por cursos</h5>
+            <h3 class="mb-5 text-center ">Lista de Cursos</h3>
+            {%verbatim%}
+            <div id="app-courses" class="row">
+                <aside class="col-lg-3 col-md-1 mb-3">
+                    <h5>Filtrar por cursos:</h5>
                     <form>
                         <label for="title">Titulo do Curso:</label>
-                        <input type="text" class="form-control" name="title">
-                        <label for="category">Ordernar por:</label>
-                        <select class="custom-select">
-                            <option>
-                                Avaliação crescente
+                        <input id="title" type="text" class="form-control" name="title">
+                        <label for="orderby">Ordernar por:</label>
+                        <select id="orderby" class="custom-select" name="orderBy">
+                            <option value="avaliacaoCrescente"> 
+                                Avaliação maior
                             </option>
-                            <option>
-                                Avaliação decrescente
+                            <option value="avaliacaoDecrescente">
+                                Avaliação menor
                             </option>
-                            <option>
-                                Numero de matriculas crescente
+                            <option value="matriculaCrescente">
+                                Numero de matriculas maior
                             </option>
-                            <option>
-                                Numero de matriculas decrescente
+                            <option value="matriculaDecrescente">
+                                Numero de matriculas menor
                             </option>
-                            <option>
+                            <option value="dataDecrescente">
                                 Cursos Mais novos
                             </option>
-                            <option>
+                            <option value="dataCrescente">
                                 Cursos Mais Antigos
                             </option>
                         </select>
                         <label for="category">Categoria</label>
-                        <select class="custom-select">
-                            <option>
-                                Categoria
+                        <select id="category"  class="custom-select" name="category">
+                            <option value="0">
+                                Todas Categorias
+                            </option>
+                            <option v-for="category in categories" v-bind:value="category.id">
+                                {{category.name}}
                             </option>
                         </select>
-                        <label for="category">Sub-Categoria</label>
-                        <select class="custom-select">
-                            <option>
-                                Sub-Categoria
-                            </option>
-                        </select>
-                        <input type="submit" class="btn btn-primary mt-3 btn-block">
+                        <input id="page" type="hidden" name="page" value="1">
+                        <button class="btn btn-primary mt-3 btn-block" onclick="return false" v-on:click="searchTerms()">Pesquisar</button>
                     </form>
                 </aside><!-- aside.col-lg-3 -->
                 <div class="col-lg-9 col-md-11">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row card-course-header text-center">
-                                <h5 class="card-title col-12 col-md-12">Titulo do curso</h5>
-                                <p class="col-12 col-md-12">Categoria do curso</p>
-                            </div>
-                            <p>DLorem ipsum dolor sit amet, consectetur adipiscing elit. In placerat semper volutpat. Ut fringilla ultricies ultricies. Nunc imperdiet, nisl quis faucibus aliquet.</p>
-                            <div class="d-flex justify-content-between">
-                                <div class="row">
-                                    <div class="col-12 col-md-2"><img class="course-author-img" src="{{base_url}}public/img/user.png"></div>
-                                    <div class="col-12 col-md-10">
-                                        <label>Nome Professor</label>
-                                        <p>00/00/0000</p>
+                        <div class="alert alert-info" role="alert" v-if="courses.length ==0">
+                            Não foi encontrado nenhum curso!
+                        </div>
+                        <div class="card mb-3" v-for="course in courses">
+                            <div class="card-body">
+                                <div class="row card-course-header text-center">
+                                    <h5 class="card-title col-12 col-md-12"> {{course.title}}</h5>
+                                    <p class="col-12 col-md-12">{{course.CategoryName}}</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <img class="comment-autor-img" v-if="course.profile_picture != ''" :src="base_url+'public/img/profile/'+course.profile_picture">
+                                            <img class="comment-autor-img" v-if="course.profile_picture == ''" :src="base_url+'public/img/user.png'">
+                                        </div>
+                                        <div class="col-12 col-md-9">
+                                            <label>{{course.name}}</label>
+                                            <p>{{course.created_at | formatDate}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="container-stars">
+                                        <label>Avaliação:</label>
+                                        <br>
+                                        <span v-if="course.rating_average > 0">
+                                            <i v-for="n in course.rating_average-0" class="fas fa-star" style="color:#FC0"></i>
+                                        </span><span v-if="course.rating_average !=5">
+                                            <i v-for="n in 5-course.rating_average" class="far fa-star" style="color:#CCC"></i>
+                                        </span>
+                                        <span class="container-quantity-stars text-center">
+                                            ({{course.ratings}})
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="container-stars">
-                                    <p>Avaliação</p>
-                                    <span>
-                                        <i class="fas fa-star"></i>
-                                    </span>
-                                    <span>
-                                        <i class="far fa-star"></i>
-                                    </span>
-                                    <span>
-                                        <i class="far fa-star"></i>
-                                    </span>
-                                    <span>
-                                        <i class="far fa-star"></i>
-                                    </span>
-                                    <span>
-                                        <i class="far fa-star"></i>
-                                    </span>
-                                </div>
-                            </div><!-- div.d-flex-->
-                            <a href="{{base_url}}course?id=" class="btn btn-block btn-primary">Mais Informações</a>
-                        </div><!-- div.card-body-->
-                    </div><!-- div.card -->
-                    <div>
+                                <a :href="base_url+'course?id='+course.id" class="btn btn-block btn-primary">Mais Informações</a>
+                            </div>
+                        </div>
                         <nav>
                             <ul class="pagination d-flex justify-content-center">
-                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                                <li class="page-item active "><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                <li id="previous-page" class="page-item">
+                                    <button class="page-link" v-on:click="previousPage()">Anterior</button>
+                                </li>
+                                <li id="next-page" class="page-item">
+                                    <button class="page-link" v-on:click="nextPage()">Proximo</button>
+                                </li>
                             </ul><!-- ul.pagination -->
                         </nav><!-- nav -->
+                        {%endverbatim%}
                     </div>
                 </div> <!-- div.col-lg-9-->
             </div> <!-- div.row -->
         </div><!-- div.container -->
     </div><!-- div.courses -->
+    <script>
+        Vue.config.productionTip = false;
+        Vue.filter('formatDate', function(value) {
+            if (value) {
+                return moment(String(value)).format('DD/MM/YYYY')
+            }
+        });
+        var app = new Vue({
+            el:"#app-courses",
+            data(){
+                return{
+                    courses:[],
+                    categories:[],
+                    base_url:"https://wikivideo.ga/wikivideo/",
+                    url:'ajaxCourses',
+                }
+            },
+            mounted(){
+                this.getCategories();
+                this.getCourses();
+            },
+            methods:{
+                getCategories(){
+                    var userData = new FormData();
+                    userData.set('method','getCategories');
+                    axios({
+                        method:'post',
+                        url:this.base_url+this.url,
+                        data:userData
+                    }).then((response)=>{
+                        this.categories = response.data.categories
+                    });
+                },
+                getCourses(){
+                    let $this = this;
 
+                    orderby = $("#orderby").val();
+                    category = $("#category").val();
+                    title = $("#title").val();
+                    page = parseInt($("#page").val());
+
+                    var userData = new FormData();
+                    userData.set('method','getCourses');
+                    userData.set('orderby',orderby);
+                    userData.set('category',category);
+                    userData.set('title',title);
+                    userData.set('page',page);
+
+                    axios({
+                        method:'post',
+                        url:this.base_url+this.url,
+                        data:userData
+                    }).then((response)=>{
+                        this.courses = response.data.courses
+
+                        if(page >= response.data.max_page){
+                            $("#next-page").addClass("disabled");
+                        }else if(page < response.data.max_page){
+                            $("#next-page").removeClass("disabled");
+                        }
+                        if(response.data.max_page < 2){
+                            $("#next-page").addClass("disabled");
+                        }  
+                    });
+
+                    if(page > 1){
+                        $("#previous-page").removeClass("disabled");
+                    } 
+                    if(page <= 1){
+                        $("#previous-page").addClass("disabled");
+                    }
+                    window.scrollTo(0,0);
+                },
+                nextPage(){
+                    $("#page").val(parseInt($("#page").val())+1);
+                    page = $("#page").val();
+                    this.getCourses();
+                },
+                previousPage(){
+                    $("#page").val(parseInt($("#page").val())-1);
+                    page = $("#page").val();
+                    this.getCourses();
+                
+                },
+                searchTerms(){
+                    $("#page").val(1);
+                    page = $("#page").val();
+                    this.getCourses();
+                }
+            }
+        });
+
+
+        function formatData(data){
+            return moment(data).format('DD-MM-YYYY')
+        }
+            
+    </script>
 {% endblock %}

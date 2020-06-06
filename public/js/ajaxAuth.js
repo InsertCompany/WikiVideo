@@ -10,7 +10,6 @@ $('#registerForm').submit(function(event){
         registerError.hide();
         /*serializa todas as informações do formulario */
         var registerDate = $("#registerForm").serialize();
-        console.log(registerDate);
         var url = location.hostname;
         /*Metodo ajax envia o formulario de forma assicrona para a url */
         $.ajax({
@@ -72,10 +71,10 @@ $('#loginForm').submit(function(event){
             },
             success:function(data){
                 data = JSON.parse(data);
+                $("#loginSubmit").prop("disabled",false);
                 if(data['result'] == "error"){
                     loginError.html(data['errors']);
                     loginError.show();
-                    $("#loginSubmit").prop("disabled",false);
                 }else{
                     location.href = "../";
                 }

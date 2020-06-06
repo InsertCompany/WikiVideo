@@ -52,19 +52,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'HomeController';
 $route['courses'] = 'HomeController/courses';
 $route['course'] = 'HomeController/course';
+$route['ajaxHome'] = "HomeController/ajax_home";
+$route['chat'] = 'HomeController/chat';
 
-$route['auth/confirm'] = 'AuthController/confirm';
 $route['auth/login'] = 'AuthController/login';
-$route['auth/recovery'] = 'AuthController/recovery';
+$route['auth/ajax'] = 'AuthController/ajax';
 $route['auth/logout'] = 'AuthController/logout';
 
 $route['dashboard'] = 'DashboardController/index';
 $route['dashboard/my-courses'] = 'DashboardController/my_courses';
+$route['dashboard/ajaxMyCourses'] = 'DashboardController/ajax_dashboard';
 $route['dashboard/my-courses/course'] = 'DashboardController/my_course';
 $route['dashboard/my-profile'] = 'DashboardController/my_profile';
 
 $route['course/enroll'] = 'CourseController/enroll';
 
-$route['ajax'] = 'AjaxController/ajax';
-$route['404_override'] = '';
+$route['ajax'] = 'AjaxLoginController/ajax';
+$route['ajaxCourses'] = 'AjaxCoursesController/ajax';
+$route['404_override'] = 'HomeController/error_404';
 $route['translate_uri_dashes'] = FALSE;

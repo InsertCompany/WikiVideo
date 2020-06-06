@@ -1,6 +1,6 @@
 {% extends "layouts/index.html" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Perfil{% endblock %}
 {% block head %}
     {{ parent() }}
 {% endblock %}
@@ -9,6 +9,11 @@
     <div class="container my-5">
         <h4 class="text-center mb-4">Seja bem vindo {{ user.name }}</h4>
         <div>
+            <div id="alertSuccess" class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <div class="row">
                 <div class="col-md-2">
                     <div class="aside-menu btn-group-vertical btn-block">
@@ -21,7 +26,16 @@
                 <div class="col-md-10 ml-0 dashboard-user  my-3">
                     <div class="row profile-card">
                         <div class="col-md-4 col-12 mt-4">
-                            <div class="text-sm-center"><img src="{{base_url}}public/img/user.png" class="profile-img"></div>
+                            <div class="text-sm-center">
+                                {% if user.profile_picture != ""%}
+                                    <img id="image" src="{{base_url}}public/img/profile/{{user.profile_picture}}" class="profile-img img-fluid rounded-circle">
+                                {% else %}
+                                    <img id="image" src="{{base_url}}public/img/user.png" class="profile-img img-fluid rounded-circle">
+                                {%endif%}
+                                <button class="btn btn-primary mt-3 btn-block" data-toggle="modal" data-target="#modalPicture">Alterar foto</button>
+                                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#modalRemovePicture">Remover foto</button>
+
+                            </div>
                         </div>
                         <div class="col-md-8 col-12">
                             <div class="row">
@@ -37,22 +51,6 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-12">
-                                    <label>Descrição:</label>
-                                    <p>{{ user.description }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label>CEP:</label>
-                                    <p>{{ user.postalcode }}</p>
-                                </div>
-                                <div class="col-6 mt-3">
-                                    <label>Cidade:</label>
-                                    <p>{{ user.city }} - {{user.state}}</p>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-6 ">
                                     <label>Data de Nascimento:</label>
                                     <p>{{user.birthdate}}</p>
@@ -62,16 +60,209 @@
                                     <p>{{ user.gender }}</p>
                                 </div>
                             </div>
+                            <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalPassword">Alterar senha</button>
                         </div>
                     </div>
-                    <div class="row mb-5">
-                        <div class="col-12 text-center">
-                            <a href="" class="btn btn-primary">Editar perfil</a>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
+    {%verbatim%}
+    <div id="app-password">
+        <div class="modal fade" id="modalPassword" tabindex="-1" role="dialog" aria-labelledby="modalPasswordLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalPasswordLabel">Título do modal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert" v-if="changePasswordError != ''" v-html="changePasswordError">
+                        {{changePasswordError}}
+                    </div>
+                    <div class="form">
+                            <label for="oldPassword">Senha Antiga:</label>
+                            <input type="password" class="form-control" id="oldPassword" name="oldPassword">
+                            <label for="oldPassword">Senha Nova:</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                            <label for="oldPassword">Confirmar senha:</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" v-on:click="sendPassword()">Salvar mudanças</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div id="app-picture">
+        <div class="modal fade" id="modalPicture" tabindex="-1" role="dialog" aria-labelledby="modalPictureLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalPictureLabel">Editar perfil</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img id="image" :src="imageurl" class="profile-img">
+                            <form>
+                                <input id="imageUpload" type="file">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button id="sendPicture" type="button" class="btn btn-primary" v-on:click="sendPicture()">Enviar imagem</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modalRemovePicture" tabindex="-1" role="dialog" aria-labelledby="modalRemovePictureLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalRemovePictureLabel">Editar perfil</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <p>Você desejeja remover a foto de perfil?
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button id="sendPicture" type="button" class="btn btn-danger" v-on:click="removePicture()">Apagar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%endverbatim%}
+
+    <script>
+         var appPassword = new Vue({
+            el:"#app-password",
+            data(){
+                return{
+                    base_url:"https://wikivideo.ga/wikivideo/",
+                    url:'dashboard/ajaxMyCourses',
+                    changePasswordError:"",
+                    changePasswordSuccess:""
+
+                }
+            },
+            mounted(){
+                $("#alertSuccess").hide();
+            },
+            methods:{
+                sendPassword(){
+                 
+                    oldPassword = $('#oldPassword').val();
+                    newPassword = $('#password').val();
+                    confirmPassword= $('#confirmPassword').val();
+
+                    var userData = new FormData();
+                    userData.set('method',"changePassword");
+                    userData.set("oldPassword",oldPassword);
+                    userData.set("newPassword",newPassword);   
+                    userData.set("confirmPassword",confirmPassword);   
+
+                    axios({
+                        method:'post',
+                        url:this.base_url+this.url,
+                        data:userData
+
+                    }).then((response)=>{
+                        console.log(response);
+                        if(response.data.status=="failed"){
+                            this.changePasswordError = response.data.errors;
+                        }else if(response.data.status=="success"){
+                            this.changePasswordError = "";
+                            oldPassword = $('#oldPassword').val("");
+                            newPassword = $('#password').val("");
+                            confirmPassword= $('#confirmPassword').val("");
+
+                            $("#alertSuccess").html("Senha alterada com sucesso!");
+                            $("#alertSuccess").fadeIn();
+                            $("#modalPassword").modal("hide");
+                        }
+                    });
+                }
+            }
+            
+        });
+        var app = new Vue({
+            el:"#app-picture",
+            data(){
+                return{
+                    imageurl:"{{base_url}}public/img/user.png",
+                    base_url:"https://wikivideo.ga/wikivideo/",
+                    url:'dashboard/ajaxMyCourses',
+                }
+            },
+            mounted(){
+                this.loadImage();
+            },
+            methods:{
+                loadImage(){
+                    if("{{user.profile_picture}}" != ""){
+                        this.imageurl= this.base_url+"public/img/profile/{{user.profile_picture}}";
+                    }else{
+                    
+                    }
+                },
+                sendPicture(){
+                    method = "sendImage";
+                    image = $('#imageUpload').prop('files')[0];
+
+                    var userData = new FormData();
+                    userData.set('method',method);
+                    userData.set("image",image);
+                    $("#sendPicture").attr("disabled",true);
+                    axios({
+                        headers:{
+                            'Content-Type': 'multipart/form-data'
+                        },
+                        method:'post',
+                        url:this.base_url+this.url,
+                        data:userData
+
+                    }).then((response)=>{
+                        console.log(response);
+                        this.imageurl = this.base_url+"public/img/profile/"+response.data.imagepath;
+                        $("#image").attr("src",this.base_url+"public/img/profile/"+response.data.imagepath);
+                        $("#modalPicture").modal("hide");
+                         $("#sendPicture").attr("disabled",false);
+                    });
+                },
+                removePicture(){
+                    method = "removePicture";
+                    var userData = new FormData();
+                    userData.set('method',method);
+                    axios({
+                        method:'post',
+                        url:this.base_url+this.url,
+                        data:userData
+
+                    }).then((response)=>{
+                        console.log(response);
+                        this.imageurl = this.base_url+"public/img/user.png";
+                        $("#image").attr("src",this.base_url+"public/img/user.png");
+                        $("#modalRemovePicture").modal("hide");
+                    });
+                }
+            }
+        });
+            
+            
+    </script>   
 {% endblock %}
