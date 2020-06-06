@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'wikivideo',
-	'password' => 'vamosprogramar',
-	'database' => 'wikivideo',
+	'hostname' => 'us-cdbr-east-05.cleardb.net',
+	'username' => 'bd26f1caff3161',
+	'password' => '49309984',
+	'database' => 'heroku_f2618a2723d7b3d',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
