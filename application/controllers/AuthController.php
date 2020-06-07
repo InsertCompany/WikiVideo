@@ -29,9 +29,12 @@ class AuthController extends CI_Controller {
 		$this->login = $this->User->verify_login();
 
 		$categories = $this->Course->get_category(3);
-		$categories[0]->courses = $this->Course->list_course(4,0,$categories[0]->id);
-		$categories[1]->courses = $this->Course->list_course(4,0,$categories[1]->id);
-		$categories[2]->courses = $this->Course->list_course(4,0,$categories[2]->id);
+		if($categories != null){
+			$categories[0]->courses = $this->Course->list_course(4,0,$categories[0]->id);
+			$categories[1]->courses = $this->Course->list_course(4,0,$categories[1]->id);
+			$categories[2]->courses = $this->Course->list_course(4,0,$categories[2]->id);
+		}
+		
 		$this->data['categories'] = $categories;
 
 	}
