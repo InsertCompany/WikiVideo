@@ -45,7 +45,7 @@ class User extends CI_Model {
 
     }
     public function get_user_by_email($email){
-        $user = $this->db->select('Permission.*, User.* ,User.id as userId')->from('User')->join('Permission','User.id=Permission.user_id')->where(array('email'=>$email))->get()->result();
+        $user = $this->db->select('Permission.*, User.* ,User.id as userId')->from('User')->join('Permission','User.id=Permission.user_id')->where(array('User.email'=>$email))->get()->result();
         if($user != null){
             return $user[0];
         }else{
