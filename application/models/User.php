@@ -35,7 +35,8 @@ class User extends CI_Model {
     }
     public function set_user_acess($email){
         $id = $this->get_user_by_email($email)->userId;
-        var_dump($id);
+        echo $email;
+        var_dump($this->get_user_by_email($email));
         $ip = $_SERVER['REMOTE_ADDR'];
         if($this->db->insert('UserAcess',array('user_id'=>$id,'ip_access'=>$ip))){
             return true;
